@@ -26,22 +26,16 @@ public class ProfesionalServiceImpl implements ProfesionalService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // ALL X DTO
     @Override
     public List<ProfesionalDto> obtenerTodosLosProfesionales() {
         List<Profesional> profesionales = profesionalRepository.findAll();
         return profesionales.stream()
-                .map(profesional -> new ProfesionalDto(profesional.getNombre(), profesional.getApellido(),profesional.getRol()))
+                .map(profesional -> new ProfesionalDto(profesional.getNombre(), profesional.getApellido()))
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public List<ProfesionalDto> buscarPorApellido(String apellido) {
-        List<Profesional> profesionales = profesionalRepository.findByApellido(apellido);
-        return profesionales.stream()
-                .map(profesional -> new ProfesionalDto(profesional.getNombre(), profesional.getApellido(), profesional.getRol()))
-                .collect(Collectors.toList());
-    }
-
+    // CREAR
     @Override
     @Transactional
     public Profesional guardarProfesional(Profesional profesional) {
@@ -49,6 +43,26 @@ public class ProfesionalServiceImpl implements ProfesionalService {
         profesional.setPassword(passwordBCrypt);
         return profesionalRepository.save(profesional);
     }
+
+    // BUSCAR X APELLIDO
+    @Override
+    public List<ProfesionalDto> buscarPorApellido(String apellido) {
+        List<Profesional> profesionales = profesionalRepository.findByApellido(apellido);
+        return profesionales.stream()
+                .map(profesional -> new ProfesionalDto(profesional.getNombre(), profesional.getApellido()))
+                .collect(Collectors.toList());
+    }
+
+    // BUSCAR X ESPECIALIDAD
+    @Override
+    public List<ProfesionalDto> findProfesionalesByEspecialidadNombre(String nombreEspecialidad) {
+        return profesionalRepository.findProfesionalesByEspecialidadNombre(nombreEspecialidad)
+                .stream()
+                .map(profesional -> new ProfesionalDto(profesional.getNombre(), profesional.getApellido()))
+                .collect(Collectors.toList());
+    }
+
+
 
 
     @Override

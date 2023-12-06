@@ -51,7 +51,6 @@ public class JpaUserDetailsService implements UserDetailsService {
         // Decidir si el usuario es un profesional, un paciente, o no existe
         if (optionalProfesional.isPresent()) {
             Profesional profesional = optionalProfesional.get();
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + profesional.getRol().getNombreRol().toUpperCase()));
             return new User(
                     tipoDocumento + ":" + profesional.getNroDocumento(),
                     profesional.getPassword(),
@@ -60,7 +59,6 @@ public class JpaUserDetailsService implements UserDetailsService {
             );
         } else if (optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
-            authorities.add(new SimpleGrantedAuthority("ROLE_" + paciente.getRol().getNombreRol().toUpperCase()));
             return new User(
                     tipoDocumento + ":" + paciente.getNroDocumento(),
                     paciente.getPassword(),

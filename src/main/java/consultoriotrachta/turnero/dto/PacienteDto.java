@@ -1,6 +1,5 @@
 package consultoriotrachta.turnero.dto;
 
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,15 +7,14 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProfesionalDto {
-
+public class PacienteDto {
     private String nombre;
     private String apellido;
 
 
-    public ProfesionalDto(String nombre, String apellido) {
+    public PacienteDto(String nombre, String apellido) {
         this.nombre = nombre;
         this.apellido = apellido;
     }
-}
 
+}

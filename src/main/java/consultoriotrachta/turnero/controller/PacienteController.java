@@ -1,5 +1,6 @@
 package consultoriotrachta.turnero.controller;
 
+import consultoriotrachta.turnero.dto.PacienteDto;
 import consultoriotrachta.turnero.entity.Paciente;
 import consultoriotrachta.turnero.service.PacienteService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/pacientes")
@@ -32,6 +34,15 @@ public class PacienteController {
                     .body(e.getMessage());
         }
     }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<PacienteDto> buscarPacientePorTipoYNumeroDocumento(
+            @RequestParam String tipoDocumento,
+            @RequestParam String nroDocumento) {
+        Optional<PacienteDto> paciente = pacienteService.buscarPorTipoYNumeroDocumento(tipoDocumento, nroDocumento);
+        return paciente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
 
     @GetMapping("/{id}")
     public ResponseEntity<Paciente> obtenerPacientePorId(@PathVariable Integer id) {

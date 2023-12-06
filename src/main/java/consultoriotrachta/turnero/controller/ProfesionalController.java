@@ -31,4 +31,11 @@ public class ProfesionalController {
         Profesional profesionalGuardado = profesionalService.guardarProfesional(profesional);
         return ResponseEntity.ok(profesionalGuardado);
     }
+
+    @GetMapping("especialidad/{nombreEspecialidad}")
+    public ResponseEntity<List<ProfesionalDto>> findProfesionalesByEspecialidadNombre(@PathVariable String nombreEspecialidad) {
+        List<ProfesionalDto> profesionales = profesionalService.findProfesionalesByEspecialidadNombre(nombreEspecialidad);
+        return ResponseEntity.ok(profesionales);
+    }
+
 }

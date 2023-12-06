@@ -21,6 +21,8 @@ public interface ProfesionalService {
 
     Profesional guardarProfesional(Profesional profesional);
 
+    List<ProfesionalDto> findProfesionalesByEspecialidadNombre(String nombreEspecialidad);
+
     Optional<Profesional> obtenerProfesionalPorId(Integer id);
     List<Profesional> listarTodosLosProfesionales();
 

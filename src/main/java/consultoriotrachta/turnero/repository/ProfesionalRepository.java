@@ -2,6 +2,7 @@ package consultoriotrachta.turnero.repository;
 
 
 
+import consultoriotrachta.turnero.dto.ProfesionalDto;
 import consultoriotrachta.turnero.entity.Profesional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,6 +22,12 @@ public interface ProfesionalRepository extends JpaRepository<Profesional, Intege
                                                                              @Param("nroDocumento") String nroDocumento);
 
 
+    // Buscar profesionales por el nombre de la especialidad
+    @Query("SELECT new consultoriotrachta.turnero.dto.ProfesionalDto(p.nombre, p.apellido) " +
+            "FROM Profesional p " +
+            "JOIN p.especialidad e " +
+            "WHERE e.nombre = :nombreEspecialidad AND e.nombre != 'Admin'")
+    List<ProfesionalDto> findProfesionalesByEspecialidadNombre(@Param("nombreEspecialidad") String nombreEspecialidad);
 
 
     // Método para buscar profesionales por nombre
@@ -30,7 +37,7 @@ public interface ProfesionalRepository extends JpaRepository<Profesional, Intege
     List<Profesional> findByApellido(String apellido);
 
     // Método para buscar profesionales por especialidad
-    List<Profesional> findByEspecialidad_Nombre(String nombreEspecialidad);
+
 
     // Método para buscar un profesional por email
     Optional<Profesional> findByEmail(String email);

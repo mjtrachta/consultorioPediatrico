@@ -1,5 +1,6 @@
 package consultoriotrachta.turnero.service;
 
+import consultoriotrachta.turnero.dto.PacienteDto;
 import consultoriotrachta.turnero.entity.Paciente;
 import consultoriotrachta.turnero.repository.PacienteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PacienteServiceImpl implements PacienteService {
@@ -51,4 +53,11 @@ public class PacienteServiceImpl implements PacienteService {
     public void eliminarPaciente(Integer id) {
         pacienteRepository.deleteById(id);
     }
+
+    @Override
+    public Optional<PacienteDto> buscarPorTipoYNumeroDocumento(String tipoDocumento, String nroDocumento) {
+        return pacienteRepository.buscarPorTipoYNumeroDocumento(tipoDocumento, nroDocumento);
+    }
+
+
 }
