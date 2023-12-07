@@ -1,5 +1,6 @@
 package consultoriotrachta.turnero.service;
 
+import consultoriotrachta.turnero.dto.ObraSocialDto;
 import consultoriotrachta.turnero.dto.PacienteDto;
 import consultoriotrachta.turnero.entity.Paciente;
 import consultoriotrachta.turnero.repository.PacienteRepository;
@@ -35,9 +36,21 @@ public class PacienteServiceImpl implements PacienteService {
     }
 
     @Override
-    public Paciente obtenerPacientePorId(Integer id) {
-        return pacienteRepository.findById(id).orElse(null);
+    public Optional<PacienteDto> obtenerPacienteDtoPorId(Integer id) {
+        return pacienteRepository.findById(id)
+                .map(paciente -> new PacienteDto(paciente.getNombre(), paciente.getApellido()));
     }
+
+    @Override
+    public Optional<PacienteDto> buscarPorTipoYNumeroDocumento(String tipoDocumento, String nroDocumento) {
+        return pacienteRepository.buscarPorTipoYNumeroDocumento(tipoDocumento, nroDocumento);
+    }
+
+    @Override
+    public Optional<ObraSocialDto> findObraSocialByTipoDocumentoAndNumeroDocumento(String tipoDocumento, String nroDocumento) {
+        return pacienteRepository.findObraSocialByTipoDocumentoAndNumeroDocumento(tipoDocumento, nroDocumento);
+    }
+
 
     @Override
     public List<Paciente> listarTodosLosPacientes() {
@@ -54,10 +67,7 @@ public class PacienteServiceImpl implements PacienteService {
         pacienteRepository.deleteById(id);
     }
 
-    @Override
-    public Optional<PacienteDto> buscarPorTipoYNumeroDocumento(String tipoDocumento, String nroDocumento) {
-        return pacienteRepository.buscarPorTipoYNumeroDocumento(tipoDocumento, nroDocumento);
-    }
+
 
 
 }

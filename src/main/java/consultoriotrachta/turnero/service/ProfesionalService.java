@@ -23,6 +23,16 @@ public interface ProfesionalService {
 
     List<ProfesionalDto> findProfesionalesByEspecialidadNombre(String nombreEspecialidad);
 
+
+
+
+
+
+
+
+
+
+
     Optional<Profesional> obtenerProfesionalPorId(Integer id);
     List<Profesional> listarTodosLosProfesionales();
 

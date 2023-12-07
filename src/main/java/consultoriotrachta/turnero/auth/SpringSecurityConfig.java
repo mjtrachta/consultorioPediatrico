@@ -43,13 +43,17 @@ public class SpringSecurityConfig {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.authorizeHttpRequests(authRules -> authRules
+
                         .requestMatchers(HttpMethod.GET, "/profesionales/all").permitAll()
                         .requestMatchers(HttpMethod.GET, "/profesionales/buscarPorApellido").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/profesionales/especialidad/{nombreEspecialidad}").hasAnyRole("PROFESIONAL","ADMIN","USUARIO")
-                        .requestMatchers(HttpMethod.POST, "/profesionales/guardar").hasAnyRole("PROFESIONAL","ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/pacientes/guardar").hasAnyRole("PROFESIONAL","ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/pacientes/buscar").hasAnyRole("PROFESIONAL","ADMIN","USUARIO")
-                        .requestMatchers(HttpMethod.GET, "/pacientes/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/profesionales/especialidad/{nombreEspecialidad}").hasAnyRole("ADMIN","PROFESIONAL")
+                        //NO FUNCIONA
+                        .requestMatchers(HttpMethod.POST, "/profesionales/guardar").permitAll()
+                        //NO FUNCIONA
+                        .requestMatchers(HttpMethod.POST, "/pacientes/guardar").hasAnyRole("ADMIN","PROFESIONAL")
+                        .requestMatchers(HttpMethod.GET, "/pacientes/buscar").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
+                        .requestMatchers(HttpMethod.GET, "/pacientes/{id}").hasAnyRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/pacientes/obra-social").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
                         .anyRequest().authenticated())
                 .addFilter(new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager()))
                 .addFilter(new JwtValidationFilter(authenticationConfiguration.getAuthenticationManager()))

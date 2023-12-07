@@ -1,5 +1,6 @@
 package consultoriotrachta.turnero.controller;
 
+import consultoriotrachta.turnero.dto.ObraSocialDto;
 import consultoriotrachta.turnero.dto.PacienteDto;
 import consultoriotrachta.turnero.entity.Paciente;
 import consultoriotrachta.turnero.service.PacienteService;
@@ -8,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+
+
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,22 +40,41 @@ public class PacienteController {
     }
 
     @GetMapping("/buscar")
-    public ResponseEntity<PacienteDto> buscarPacientePorTipoYNumeroDocumento(
-            @RequestParam String tipoDocumento,
-            @RequestParam String nroDocumento) {
+    public ResponseEntity<PacienteDto> buscarPacientePorToken(Principal principal) {
+        // Suponiendo que el 'sub' del token es "D.N.I.:12345678"
+        String[] datos = principal.getName().split(":");
+        String tipoDocumento = datos[0].trim(); // D.N.I.
+        String nroDocumento = datos[1].trim(); // 12345678
+
         Optional<PacienteDto> paciente = pacienteService.buscarPorTipoYNumeroDocumento(tipoDocumento, nroDocumento);
         return paciente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-
     @GetMapping("/{id}")
-    public ResponseEntity<Paciente> obtenerPacientePorId(@PathVariable Integer id) {
-        Paciente paciente = pacienteService.obtenerPacientePorId(id);
-        if (paciente != null) {
-            return ResponseEntity.ok(paciente);
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<PacienteDto> obtenerPacientePorId(@PathVariable Integer id) {
+        return pacienteService.obtenerPacienteDtoPorId(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/obra-social")
+    public ResponseEntity<ObraSocialDto> findObraSocialByTipoDocumentoAndNumeroDocumento(
+            @RequestParam String tipoDocumento,
+            @RequestParam String nroDocumento) {
+        return pacienteService.findObraSocialByTipoDocumentoAndNumeroDocumento(tipoDocumento, nroDocumento)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
+
+
+
+
+
+
+
+
 
     @GetMapping("/listar")
     public ResponseEntity<List<Paciente>> listarTodosLosPacientes() {

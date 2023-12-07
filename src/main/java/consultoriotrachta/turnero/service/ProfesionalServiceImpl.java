@@ -65,6 +65,11 @@ public class ProfesionalServiceImpl implements ProfesionalService {
 
 
 
+
+
+
+
+
     @Override
     public Optional<Profesional> obtenerProfesionalPorId(Integer id) {
         return profesionalRepository.findById(id);

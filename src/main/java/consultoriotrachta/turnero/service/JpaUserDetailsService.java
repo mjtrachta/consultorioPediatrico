@@ -40,17 +40,13 @@ public class JpaUserDetailsService implements UserDetailsService {
 
         Optional<Profesional> optionalProfesional = profesionalRepository.findByTipoDocumento_IdTipoDocumentoAndNroDocumento(tipoDocumento,nroDocumento);
         Optional<Paciente> optionalPaciente = pacienteRepository.findByTipoDocumento_IdTipoDocumentoAndNroDocumento(tipoDocumento,nroDocumento);
-        //String expectedUsername = "DNI:123456";
-
-        // Preparar las autoridades (roles) y el usuario para el UserDetails
-        //List<GrantedAuthority> authorities = new ArrayList<>();
-        //authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         // Decidir si el usuario es un profesional, un paciente, o no existe
         if (optionalProfesional.isPresent()) {
             Profesional profesional = optionalProfesional.get();
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + profesional.getRol().getNombreRol().toUpperCase()));
             return new User(
                     tipoDocumento + ":" + profesional.getNroDocumento(),
                     profesional.getPassword(),
@@ -59,6 +55,7 @@ public class JpaUserDetailsService implements UserDetailsService {
             );
         } else if (optionalPaciente.isPresent()) {
             Paciente paciente = optionalPaciente.get();
+            authorities.add(new SimpleGrantedAuthority("ROLE_" + paciente.getRol().getNombreRol().toUpperCase()));
             return new User(
                     tipoDocumento + ":" + paciente.getNroDocumento(),
                     paciente.getPassword(),
