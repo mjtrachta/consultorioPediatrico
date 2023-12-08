@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 
@@ -19,6 +21,7 @@ import java.util.Optional;
 @RequestMapping("/pacientes")
 public class PacienteController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(PacienteController.class);
     private final PacienteService pacienteService;
 
     @Autowired
@@ -39,17 +42,6 @@ public class PacienteController {
         }
     }
 
-    @GetMapping("/buscar")
-    public ResponseEntity<PacienteDto> buscarPacientePorToken(Principal principal) {
-        // Suponiendo que el 'sub' del token es "D.N.I.:12345678"
-        String[] datos = principal.getName().split(":");
-        String tipoDocumento = datos[0].trim(); // D.N.I.
-        String nroDocumento = datos[1].trim(); // 12345678
-
-        Optional<PacienteDto> paciente = pacienteService.buscarPorTipoYNumeroDocumento(tipoDocumento, nroDocumento);
-        return paciente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
-    }
-
     @GetMapping("/{id}")
     public ResponseEntity<PacienteDto> obtenerPacientePorId(@PathVariable Integer id) {
         return pacienteService.obtenerPacienteDtoPorId(id)
@@ -57,13 +49,36 @@ public class PacienteController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
+    @GetMapping("/buscar")
+    public ResponseEntity<PacienteDto> buscarPacientePorToken(Principal principal) {
+        // Suponiendo que el 'sub' del token es "D.N.I.:12345678"
+        String[] datos = principal.getName().split(":");
+        String tipoDocumento = datos[0].trim(); // D.N.I.
+        String nroDocumento = datos[1].trim(); // 12345678
+
+
+        Optional<PacienteDto> paciente = pacienteService.buscarPorTipoYNumeroDocumento(tipoDocumento, nroDocumento);
+        return paciente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+
     @GetMapping("/obra-social")
-    public ResponseEntity<ObraSocialDto> findObraSocialByTipoDocumentoAndNumeroDocumento(
-            @RequestParam String tipoDocumento,
-            @RequestParam String nroDocumento) {
-        return pacienteService.findObraSocialByTipoDocumentoAndNumeroDocumento(tipoDocumento, nroDocumento)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<ObraSocialDto> findObraSocialByAuthenticatedUser(Principal principal) {
+        try {
+            String[] datos = principal.getName().split(":");
+            String tipoDocumento = datos[0].trim();
+            String nroDocumento = datos[1].trim();
+
+            LOGGER.info("Buscando obra social para tipoDocumento: {} y nroDocumento: {}", tipoDocumento, nroDocumento);
+
+            Optional<ObraSocialDto> paciente = pacienteService.findObraSocialByTipoDocumentoAndNumeroDocumento(tipoDocumento, nroDocumento);
+
+            return paciente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            LOGGER.error("Error al buscar obra social: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
     }
 
 

@@ -53,7 +53,8 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/pacientes/guardar").hasAnyRole("ADMIN","PROFESIONAL")
                         .requestMatchers(HttpMethod.GET, "/pacientes/buscar").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
                         .requestMatchers(HttpMethod.GET, "/pacientes/{id}").hasAnyRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/pacientes/obra-social").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
+                        //NO FUNCIONA
+                        .requestMatchers(HttpMethod.GET, "/pacientes/obra-social").permitAll()
                         .anyRequest().authenticated())
                 .addFilter(new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager()))
                 .addFilter(new JwtValidationFilter(authenticationConfiguration.getAuthenticationManager()))
