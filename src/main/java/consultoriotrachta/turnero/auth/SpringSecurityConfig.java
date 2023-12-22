@@ -23,10 +23,14 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Arrays;
 
 @Configuration
 public class SpringSecurityConfig {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringSecurityConfig.class);
     @Autowired
     private AuthenticationConfiguration authenticationConfiguration;
 
@@ -42,19 +46,19 @@ public class SpringSecurityConfig {
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        LOGGER.info("Configurando rutas de seguridad...");
         return http.authorizeHttpRequests(authRules -> authRules
 
-                        .requestMatchers(HttpMethod.GET, "/profesionales/all").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/profesionales/buscarPorApellido").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/profesionales/especialidad/{nombreEspecialidad}").hasAnyRole("ADMIN","PROFESIONAL")
+                        .requestMatchers(HttpMethod.GET, "/profesionales/all").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
+                        .requestMatchers(HttpMethod.GET, "/profesionales/buscarPorApellido").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
+                        .requestMatchers(HttpMethod.GET, "/profesionales/especialidad/{nombreEspecialidad}").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
                         //NO FUNCIONA
-                        .requestMatchers(HttpMethod.POST, "/profesionales/guardar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/profesionales/guardar").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
                         //NO FUNCIONA
                         .requestMatchers(HttpMethod.POST, "/pacientes/guardar").hasAnyRole("ADMIN","PROFESIONAL")
                         .requestMatchers(HttpMethod.GET, "/pacientes/buscar").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
+                        .requestMatchers(HttpMethod.GET, "/pacientes/obra-social").hasAnyRole("ADMIN","PROFESIONAL","USUARIO")
                         .requestMatchers(HttpMethod.GET, "/pacientes/{id}").hasAnyRole("ADMIN")
-                        //NO FUNCIONA
-                        .requestMatchers(HttpMethod.GET, "/pacientes/obra-social").permitAll()
                         .anyRequest().authenticated())
                 .addFilter(new JwtAuthenticationFilter(authenticationConfiguration.getAuthenticationManager()))
                 .addFilter(new JwtValidationFilter(authenticationConfiguration.getAuthenticationManager()))

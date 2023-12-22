@@ -64,6 +64,7 @@ public class PacienteController {
 
     @GetMapping("/obra-social")
     public ResponseEntity<ObraSocialDto> findObraSocialByAuthenticatedUser(Principal principal) {
+        LOGGER.info("Accediendo a ruta /pacientes/obra-social");
         try {
             String[] datos = principal.getName().split(":");
             String tipoDocumento = datos[0].trim();
@@ -72,6 +73,7 @@ public class PacienteController {
             LOGGER.info("Buscando obra social para tipoDocumento: {} y nroDocumento: {}", tipoDocumento, nroDocumento);
 
             Optional<ObraSocialDto> paciente = pacienteService.findObraSocialByTipoDocumentoAndNumeroDocumento(tipoDocumento, nroDocumento);
+
 
             return paciente.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
         } catch (Exception e) {
